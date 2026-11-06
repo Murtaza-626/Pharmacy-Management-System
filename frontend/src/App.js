@@ -8,14 +8,13 @@ import Inventory from "./pages/Inventory";
 export default function App(){
   return(
     <BrowserRouter>
-     <Navbar>
+     <Navbar/>
       <Routes>
         <Route path="/" element={<Login/>}/>
         <Route path="/dashboard" element={<Dashboard/>}/>
         <Route path="/inventory" element={<Inventory/>}/>
         <Route path="/sales" element={<Sales/>}/>
       </Routes>
-     </Navbar>
     </BrowserRouter>
   )
 }
