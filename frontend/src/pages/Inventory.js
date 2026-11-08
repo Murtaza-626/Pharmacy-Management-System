@@ -1,7 +1,11 @@
 import { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { addMedicine, deleteMedicines } from "../redux/medicineSlice";
 
 export default function Inventory() {
-    const [medicines, setMedicines] = useState([]);
+    const medicines = useSelector((state) => state.medicine.medicines);
+    const dispatch = useDispatch();
+
     const [name, setName] = useState("");
     const [category, setCategory] = useState("");
     const [manufacturer, setManufacturer] = useState("");
@@ -16,7 +20,8 @@ export default function Inventory() {
             id: Date.now(),
             name, category, manufacturer, price, stock, expiry
         }
-        setMedicines([...medicines, newMedicine]);
+        // Sending new medicine to the store
+        dispatch(addMedicine(newMedicine));
 
         setName("");
         setCategory("");
@@ -27,8 +32,7 @@ export default function Inventory() {
     }
 
     const handleDelete = (id) => {
-        const updatedMedicines = medicines.filter(medicine => medicines.id !== medicine.id);
-        setMedicines(updatedMedicines);
+        dispatch(deleteMedicines(id));
     }
 
     const handleUpdate = (id) => {
@@ -111,11 +115,13 @@ export default function Inventory() {
                                     <td className="p-2 border border-black">{medicine.stock}</td>
                                     <td className="p-2 border border-black">{medicine.expiry}</td>
                                     <td className="p-2 border border-black flex gap-2">
-                                        <button onClick={() => handleUpdate(medicine.id)} className="bg-green-600 text-white px-3 py-1 rounded">
+                                        <button onClick={() => handleUpdate(medicine.id)}
+                                            className="bg-green-600 text-white px-3 py-1 rounded">
                                             Update
                                         </button>
 
-                                        <button onClick={() => handleDelete(medicine.id)} className="bg-green-600 text-white px-3 py-1 rounded">
+                                        <button onClick={() => handleDelete(medicine.id)}
+                                            className="bg-green-600 text-white px-3 py-1 rounded">
                                             Delete
                                         </button>
                                     </td>

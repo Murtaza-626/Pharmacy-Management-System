@@ -1,10 +1,14 @@
 import { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { addToCart, cleaCart } from "../redux/cartSlice";
 
 export default function Sales() {
+    const cart = useSelector((state) => state.cart.items);
+    const dispatch = useDispatch();
+
     const [medicineName, setMedicineName] = useState("");
     const [quantity, setQuantity] = useState("");
     const [price, setPrice] = useState("");
-    const [cart, setcart] = useState([]);
 
     const handleAddToCart = (e) => {
         e.preventDefault();
@@ -16,9 +20,7 @@ export default function Sales() {
             price: parseFloat(price),
             total: parseInt(quantity) * parseFloat(price)
         }
-
-        setcart([...cart, newItem]);
-
+        dispatch(addToCart(newItem));
         setMedicineName("");
         setQuantity("");
         setPrice("");
@@ -26,11 +28,11 @@ export default function Sales() {
 
     const handleCheckout = () => {
         console.log("Checkout Completed");
-        setcart([]);
+        dispatch(cleaCart());
     }
 
     const calculateGrandTotal = () => {
-        cart.reduce((total, item) => total + item.total, 0);
+        return cart.reduce((total, item) => total + item.total, 0);
     };
 
 
