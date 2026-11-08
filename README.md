@@ -1,6 +1,6 @@
 # Pharmacy Management System
 
-A simple web app for managing pharmacy work in one place.
+A web application developed using the MERN Stack that helps pharmacies manage their daily operations digitally.
 
 ## Features
 
