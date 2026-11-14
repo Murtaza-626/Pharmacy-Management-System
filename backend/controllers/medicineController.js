@@ -59,4 +59,14 @@ const deleteMedicine = async (req, res) => {
     }
 }
 
-module.exports = { getMedicines, addMedicine, updateMedicine, deleteMedicine };   
+const getLowStock = async(req, res)=>{
+    try{
+        const medicines = await Medicine.find({stock: {$lt: 10}});
+        res.json(medicines);
+    }
+    catch(error){
+        res.status(500).json({message: "Something went wrong"});
+    }
+};
+
+module.exports = { getMedicines, addMedicine, updateMedicine, deleteMedicine, getLowStock };   

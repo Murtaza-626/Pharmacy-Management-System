@@ -6,10 +6,12 @@ const {
     getMedicines,
     addMedicine,
     updateMedicine,
-    deleteMedicine
+    deleteMedicine,
+    getLowStock
 } = require("../controllers/medicineController");
 
 router.get("/", protect, getMedicines);
+router.get("/lowstock", protect, getLowStock);
 router.post("/", protect, addMedicine);
 router.put("/:id", protect, updateMedicine);
 router.delete("/id", protect, deleteMedicine);
