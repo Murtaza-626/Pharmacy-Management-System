@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const connectdb = require("./config/db")
+const userRoutes = require("./routes/userRoutes");
 
 dotenv.config();
 connectdb();
@@ -9,6 +10,8 @@ connectdb();
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+app.use("/api/users", userRoutes);
 
 app.get("/", (req, res) => {
     res.send("Pharmacy server is running");
