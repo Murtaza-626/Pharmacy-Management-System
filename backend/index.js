@@ -4,6 +4,7 @@ const dotenv = require("dotenv");
 const connectdb = require("./config/db")
 const userRoutes = require("./routes/userRoutes");
 const medicineRoutes = require("./routes/medicineRoutes");
+const saleRoutes = require("./routes/saleRoutes");
 
 dotenv.config();
 connectdb();
@@ -14,6 +15,7 @@ app.use(express.json());
 
 app.use("/api/users", userRoutes);
 app.use("/api/medicines", medicineRoutes);
+app.use("/api/sales", saleRoutes);
 
 app.get("/", (req, res) => {
     res.send("Pharmacy server is running");
