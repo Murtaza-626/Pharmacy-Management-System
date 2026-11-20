@@ -14,6 +14,6 @@ router.get("/", protect, getMedicines);
 router.get("/lowstock", protect, getLowStock);
 router.post("/", protect, addMedicine);
 router.put("/:id", protect, updateMedicine);
-router.delete("/id", protect, deleteMedicine);
+router.delete("/:id", protect, deleteMedicine);
 
 module.exports = router;
