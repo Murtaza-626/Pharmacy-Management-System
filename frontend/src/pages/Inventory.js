@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { addMedicine, deleteMedicines } from "../redux/medicineSlice";
-
+import { setMedicines } from "../redux/medicineSlice";
+import api from "../api"
 export default function Inventory() {
     const medicines = useSelector((state) => state.medicine.medicines);
     const dispatch = useDispatch();
@@ -12,16 +12,33 @@ export default function Inventory() {
     const [price, setPrice] = useState("");
     const [stock, setStock] = useState("");
     const [expiry, setExpiry] = useState("");
+    const [editId, setEditId] = useState(null);
 
-    const handleMedicine = (e) => {
+    const loadMedicines = async () => {
+        const res = await api.get("/medicines");
+        dispatch(setMedicines(res.data));
+    };
+
+    useEffect(() => {
+        loadMedicines();
+    }, []);
+
+    const handleMedicine = async (e) => {
         e.preventDefault();
 
         const newMedicine = {
-            id: Date.now(),
-            name, category, manufacturer, price, stock, expiry
+            name, category, manufacturer, price, stock, expiryDate: expiry
+        };
+
+        // if we are editing update, otherwise add a new one
+        if (editId) {
+            await api.put("/medicines/" + editId, newMedicine);
         }
-        // Sending new medicine to the store
-        dispatch(addMedicine(newMedicine));
+        else {
+            await api.post("/medicines", newMedicine);
+        }
+
+        loadMedicines();
 
         setName("");
         setCategory("");
@@ -29,14 +46,22 @@ export default function Inventory() {
         setPrice("");
         setExpiry("");
         setStock("");
+        setEditId(null);
     }
 
-    const handleDelete = (id) => {
-        dispatch(deleteMedicines(id));
+    const handleDelete = async (id) => {
+        await api.delete("/medicines/" + id);
+        loadMedicines();
     }
 
-    const handleUpdate = (id) => {
-        console.log("Update medicine functionality will connect to backend here for id:", id);
+    const handleUpdate = (medicine) => {
+        setName(medicine.name);
+        setStock(medicine.stock);
+        setCategory(medicine.category);
+        setManufacturer(medicine.manufacturer);
+        setExpiry(medicine.expiry);
+        setPrice(medicine.price);
+        setEditId(medicine.editId); 
     };
 
     return (
@@ -77,7 +102,7 @@ export default function Inventory() {
                         required
                     />
 
-                    <input type="date"
+                    <input type="date" placeholder="Expiry Date"
                         value={expiry} onChange={(e) => setExpiry(e.target.value)}
                         className="border border-black p-2 rounded text-black"
                         required
@@ -113,14 +138,14 @@ export default function Inventory() {
                                     <td className="p-2 border border-black">{medicine.manufacturer}</td>
                                     <td className="p-2 border border-black">{medicine.price}</td>
                                     <td className="p-2 border border-black">{medicine.stock}</td>
-                                    <td className="p-2 border border-black">{medicine.expiry}</td>
+                                    <td className="p-2 border border-black">{medicine.expiryDate}</td>
                                     <td className="p-2 border border-black flex gap-2">
-                                        <button onClick={() => handleUpdate(medicine.id)}
+                                        <button onClick={() => handleUpdate(medicine)}
                                             className="bg-green-600 text-white px-3 py-1 rounded">
                                             Update
                                         </button>
 
-                                        <button onClick={() => handleDelete(medicine.id)}
+                                        <button onClick={() => handleDelete(medicine._id)}
                                             className="bg-green-600 text-white px-3 py-1 rounded">
                                             Delete
                                         </button>

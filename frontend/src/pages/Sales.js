@@ -1,35 +1,61 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { addToCart, cleaCart } from "../redux/cartSlice";
+import { setMedicines } from "../redux/medicineSlice";
+import api from "../api"
 
 export default function Sales() {
     const cart = useSelector((state) => state.cart.items);
+    const medicines = useSelector((state) => state.medicine.medicines);
     const dispatch = useDispatch();
 
     const [medicineName, setMedicineName] = useState("");
     const [quantity, setQuantity] = useState("");
-    const [price, setPrice] = useState("");
+    // const [price, setPrice] = useState("");
+
+    const loadMedicines = async () => {
+        const res = await api.get("/medicines");
+        dispatch(setMedicines(res.data));
+    }
+
+    useEffect(() => {
+        loadMedicines();
+    }, [dispatch]);
 
     const handleAddToCart = (e) => {
         e.preventDefault();
 
+        const medicine = medicines.find((m) => m.name.toLowerCase() === medicineName.toLowerCase());
+        if (!medicine) {
+            alert("Medicine not found in the inventory");
+            return;
+        }
+
         const newItem = {
             id: Date.now(),
-            medicineName,
+            medicineId: medicine._id,
+            medicineName: medicine.name,
             quantity: parseInt(quantity),
-            price: parseFloat(price),
-            total: parseInt(quantity) * parseFloat(price)
+            price: medicine.price,
+            total: parseInt(quantity) * medicine.price
         }
         dispatch(addToCart(newItem));
         setMedicineName("");
         setQuantity("");
-        setPrice("");
     };
 
-    const handleCheckout = () => {
-        console.log("Checkout Completed");
-        dispatch(cleaCart());
-    }
+    const handleCheckout = async () => {
+        try {
+            // send every bill item to the backend as a sale
+            for (const item of cart) {
+                await api.post("/sales", { medicineId: item.medicineId, quantity: item.quantity });
+            }
+            alert("Checkout completed");
+            dispatch(cleaCart());
+        } catch (error) {
+            alert("Checkout failed");
+        }
+    };
 
     const calculateGrandTotal = () => {
         return cart.reduce((total, item) => total + item.total, 0);
@@ -50,10 +76,6 @@ export default function Sales() {
 
                     <input type="number" placeholder="Quantity" value={quantity}
                         onChange={(e) => setQuantity(e.target.value)}
-                        className="border border-black p-2 rounded text-black" required />
-
-                    <input type="number" placeholder="Price per Unit" value={price}
-                        onChange={(e) => setPrice(e.target.value)}
                         className="border border-black p-2 rounded text-black" required />
 
                     <button type="submit" className="bg-blue-600 text-white p-2 rounded md:col-span-3">

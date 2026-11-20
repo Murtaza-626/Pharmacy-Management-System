@@ -6,10 +6,14 @@ export default function Register(){
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
-    const handleRegister = (e) => {
-        e.preventDefault();
-        //Registration logic will be implemented here later
-        console.log("Register submitted", name, email, password);
+    const handleRegister = async() => {
+        try{
+          await api.post("/users/register", {name, email, password});
+          alert("Account created, Please Login!");
+        }
+        catch(error){
+          alert(error.response ? error.response.data.message : "Server not reachable");
+        }
     }
 
     return(
