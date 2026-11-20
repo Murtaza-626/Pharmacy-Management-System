@@ -13,6 +13,25 @@ const addMedicine = async (req, res) => {
     try {
         const { name, category, manufacturer, price, stock, expiryDate } = req.body;
 
+        // looking for a medicine that matches on every detail except stock 
+        const existing = await Medicine.findOne({
+            name, category, manufacturer, price, expiryDate
+        });
+
+        if(existing){
+            existing.stock = existing.stock + Number(stock);
+            await existing.save();
+            return res.status(200).json(existing);
+        }
+
+        // same medicine name but some detail is different, so do not add it
+        const sameName = await Medicine.findOne({ name });
+        if (sameName) {
+            return res.status(400).json({
+                message: "This medicine cannot be added. A medicine with this name already exists with different details."
+            });
+        }
+
         const medicine = await Medicine.create({
             name, category, manufacturer, price, stock, expiryDate
         });
