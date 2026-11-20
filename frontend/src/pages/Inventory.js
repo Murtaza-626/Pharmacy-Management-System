@@ -20,8 +20,8 @@ export default function Inventory() {
             const res = await api.get("/medicines");
             dispatch(setMedicines(res.data));
         }
-        catch(error){
-            
+        catch (error) {
+
         }
     };
 
@@ -38,12 +38,17 @@ export default function Inventory() {
             name, category, manufacturer, price, stock, expiryDate: expiry
         };
 
-        // if we are editing update, otherwise add a new one
-        if (editId) {
-            await api.put("/medicines/" + editId, newMedicine);
-        }
-        else {
-            await api.post("/medicines", newMedicine);
+        try {
+            // if we are editing update, otherwise add a new one
+            if (editId) {
+                await api.put("/medicines/" + editId, newMedicine);
+            }
+            else {
+                await api.post("/medicines", newMedicine);
+            }
+        } catch (error) {
+            alert(error.response ? error.response.data.message : "Something went wrong");
+            return;
         }
 
         loadMedicines();

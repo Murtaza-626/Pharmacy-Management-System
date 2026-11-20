@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { addToCart, cleaCart } from "../redux/cartSlice";
+import { addToCart, clearCart, removeFromCart } from "../redux/cartSlice";
 import { setMedicines } from "../redux/medicineSlice";
 import api from "../api"
 
@@ -19,8 +19,8 @@ export default function Sales() {
             const res = await api.get("/medicines");
             dispatch(setMedicines(res.data));
         }
-        catch(error){
-            
+        catch (error) {
+
         }
     };
 
@@ -60,9 +60,9 @@ export default function Sales() {
                 await api.post("/sales", { medicineId: item.medicineId, quantity: item.quantity });
             }
             alert("Checkout completed");
-            dispatch(cleaCart());
+            dispatch(clearCart());
         } catch (error) {
-            alert("Checkout failed");
+            alert(error.response ? error.response.data.message : "Checkout failed");
         }
     };
 
@@ -71,12 +71,12 @@ export default function Sales() {
     };
 
     if (!token) {
-    return (
-        <div className="p-8 text-center">
-            <h1 className="text-black text-2xl font-bold">Please login or register first</h1>
-        </div>
-    );
-}
+        return (
+            <div className="p-8 text-center">
+                <h1 className="text-black text-2xl font-bold">Please login or register first</h1>
+            </div>
+        );
+    }
 
     return (
         <div className="p-8">
@@ -111,6 +111,7 @@ export default function Sales() {
                                 <th className="p-2 border border-black">Quantity</th>
                                 <th className="p-2 border border-black">Unit Price</th>
                                 <th className="p-2 border border-black">Total Price</th>
+                                <th className="p-2 border border-black">Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -120,6 +121,12 @@ export default function Sales() {
                                     <td className="p-2 border border-black">{item.quantity}</td>
                                     <td className="p-2 border border-black">{item.price}</td>
                                     <td className="p-2 border border-black">{item.total}</td>
+                                    <td className="p-2 border border-black">
+                                        <button onClick={() => dispatch(removeFromCart(item.id))}
+                                            className="bg-red-600 text-white px-3 py-1 rounded">
+                                            Remove
+                                        </button>
+                                    </td>
                                 </tr>
                             ))}
                         </tbody>

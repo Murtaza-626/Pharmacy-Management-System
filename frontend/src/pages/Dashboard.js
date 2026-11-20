@@ -33,7 +33,7 @@ export default function Dashboard() {
         </div>
 
         <div className="bg-green-100 p-6 rounded shadow">
-          <h2 className="text-black text-xl">Total Sales</h2>
+          <h2 className="text-black text-xl">Total Sales (Rs)</h2>
           <p className="text-green-700 text-3xl font-bold mt-2">{stats.totalSales}</p>
         </div>
 
