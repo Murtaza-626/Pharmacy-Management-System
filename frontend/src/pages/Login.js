@@ -24,23 +24,25 @@ export default function Login() {
     };
 
     return (
-        <div className="p-8 flex flex-col items-center">
-            <h1 className="text-black text-2xl font-bold">Login</h1>
-            <form onSubmit={handleLogin} className="mt-4 flex flex-col gap-4 w-full max-w-sm">
+        <div className="min-h-screen flex items-center justify-center bg-green-50">
+            <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-sm border border-green-100">
+                <h1 className="text-green-800 text-3xl font-bold text-center mb-6">Pharmacy Login</h1>
+                <form onSubmit={handleLogin} className="flex flex-col gap-4">
 
-                <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)}
-                    className="border border-black p-2 rounded" required />
+                    <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)}
+                        className="border border-green-300 p-2 rounded" required />
 
-                <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)}
-                    className="border border-black p-2 rounded" required />
+                    <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)}
+                        className="border border-green-300 p-2 rounded" required />
 
-                <button type="submit" className="bg-blue-600 text-white p-2 rounded">Login</button>
+                    <button type="submit" className="bg-green-600 text-white p-2 rounded hover:bg-green-700">Login</button>
 
-            </form>
-            <p className="mt-4 text-black">
-                Do not have an account?
-                <Link to="/register" className="text-blue-600">Register here</Link>
-            </p>
+                </form>
+                <p className="mt-4 text-black text-center">
+                    Do not have an account?
+                    <Link to="/register" className="text-green-700"> Register here</Link>
+                </p>
+            </div>
         </div>
     );
 }
