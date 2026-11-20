@@ -1,19 +1,25 @@
-import { useState } from "react"
-import { Link } from "react-router-dom"
-import { setUser } from "../redux/authSlice"
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setUser } from "../redux/authSlice";
+import api from "../api";
 
 export default function Login() {
-    const [email, setEmail] = useState("")
-    const [password, setPassword] = useState("")
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
 
-    const handleLogin = async () => {
+    const handleLogin = async (e) => {
+        e.preventDefault();
         try {
             const res = await api.post("/users/login", { email, password });
             localStorage.setItem("token", res.data.token);
             dispatch(setUser(res.data));
+            navigate("/dashboard");
         }
         catch (error) {
-            alert("Invalid email or password")
+            alert(error.response ? error.response.data.message : "Server not reachable");
         }
     };
 

@@ -8,18 +8,27 @@ export default function Sales() {
     const cart = useSelector((state) => state.cart.items);
     const medicines = useSelector((state) => state.medicine.medicines);
     const dispatch = useDispatch();
+    const token = localStorage.getItem("token");
 
     const [medicineName, setMedicineName] = useState("");
     const [quantity, setQuantity] = useState("");
     // const [price, setPrice] = useState("");
 
     const loadMedicines = async () => {
-        const res = await api.get("/medicines");
-        dispatch(setMedicines(res.data));
-    }
+        try {
+            const res = await api.get("/medicines");
+            dispatch(setMedicines(res.data));
+        }
+        catch(error){
+            
+        }
+    };
+
 
     useEffect(() => {
-        loadMedicines();
+        if (token) {
+            loadMedicines();
+        }
     }, [dispatch]);
 
     const handleAddToCart = (e) => {
@@ -61,6 +70,13 @@ export default function Sales() {
         return cart.reduce((total, item) => total + item.total, 0);
     };
 
+    if (!token) {
+    return (
+        <div className="p-8 text-center">
+            <h1 className="text-black text-2xl font-bold">Please login or register first</h1>
+        </div>
+    );
+}
 
     return (
         <div className="p-8">

@@ -5,6 +5,7 @@ import api from "../api"
 export default function Inventory() {
     const medicines = useSelector((state) => state.medicine.medicines);
     const dispatch = useDispatch();
+    const token = localStorage.getItem("token");
 
     const [name, setName] = useState("");
     const [category, setCategory] = useState("");
@@ -15,12 +16,19 @@ export default function Inventory() {
     const [editId, setEditId] = useState(null);
 
     const loadMedicines = async () => {
-        const res = await api.get("/medicines");
-        dispatch(setMedicines(res.data));
+        try {
+            const res = await api.get("/medicines");
+            dispatch(setMedicines(res.data));
+        }
+        catch(error){
+            
+        }
     };
 
     useEffect(() => {
-        loadMedicines();
+        if (token) {
+            loadMedicines();
+        }
     }, []);
 
     const handleMedicine = async (e) => {
@@ -61,8 +69,16 @@ export default function Inventory() {
         setManufacturer(medicine.manufacturer);
         setExpiry(medicine.expiry);
         setPrice(medicine.price);
-        setEditId(medicine.editId); 
+        setEditId(medicine.editId);
     };
+
+    if (!token) {
+        return (
+            <div className="p-8 text-center">
+                <h1 className="text-black text-2xl font-bold">Please login or register first</h1>
+            </div>
+        );
+    }
 
     return (
         <div className="p-8">
